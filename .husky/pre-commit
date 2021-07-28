@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-git ls-files | grep 'src' | npx ts-standard | npx snazzy
+git diff --name-only --cached | grep 'src/' | xargs yarn lint
+git diff --name-only --cached | grep 'src/' | xargs yarn test

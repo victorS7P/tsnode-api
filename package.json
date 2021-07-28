@@ -4,14 +4,20 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^26.0.24",
     "@types/node": "^16.4.6",
     "git-commit-msg-linter": "^3.2.6",
     "husky": "^7.0.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.1.0",
     "ts-standard": "^10.0.0",
     "typescript": "^4.3.5"
   },
   "scripts": {
-    "lint:fix": "npx ts-standard --fix",
-    "prepare": "husky install"
+    "lint": "npx ts-standard | npx snazzy",
+    "lint:fix": "yarn lint --fix",
+    "prepare": "husky install",
+    "test": "jest"
   }
 }
