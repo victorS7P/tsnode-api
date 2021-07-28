@@ -1,4 +1,4 @@
 {
-  "standard.engine": "ts-standard",
-  "javascript.validate.enable": false
+  "javascript.validate.enable": false,
+  "standard.engine": "ts-standard"
 }
