@@ -1,4 +1,4 @@
-import { FieldError } from './field-error.interface'
+import { FieldError } from './fields.protocols'
 
 export interface HttpRequest {
   body?: any

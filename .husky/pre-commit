@@ -2,4 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 
 git diff --name-only --cached | grep 'src/' | xargs yarn lint
-git diff --name-only --cached | grep 'src/' | xargs yarn test
+git diff --name-only --cached | grep 'src/.*\.spec\.ts' | xargs yarn test
