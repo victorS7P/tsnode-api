@@ -1,11 +1,5 @@
-import Controller from '@presentation/protocols/controller.protocols'
-import EmailValidator from '@presentation/protocols/email-validator.protocols'
-
-import { HttpRequest, HttpResponse } from '@presentation/protocols/http.protocols'
-import { Field, FieldError } from '@presentation/protocols/fields.protocols'
-
-import { badRequest } from '@presentation/helpers/http.helpers'
-import { requiredValue } from '@presentation/helpers/fields-validators.helpers'
+import { Controller, EmailValidator, HttpRequest, HttpResponse, Field, FieldError } from '@presentation/protocols'
+import { badRequest, serverError, requiredValue } from '@presentation/helpers'
 
 export default class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
@@ -36,16 +30,20 @@ export default class SignUpController implements Controller {
       }
     ]
 
-    for (const { field, validators } of fields) {
-      for (const validator of validators) {
-        const error = validator(httpReq.body[field])
+    try {
+      for (const { field, validators } of fields) {
+        for (const validator of validators) {
+          const error = validator(httpReq.body[field])
 
-        if (error !== undefined) {
-          errors.push({ field, error })
+          if (error !== undefined) {
+            errors.push({ field, error })
+          }
         }
       }
-    }
 
-    return badRequest(errors)
+      return badRequest(errors)
+    } catch (_error) {
+      return serverError()
+    }
   }
 }

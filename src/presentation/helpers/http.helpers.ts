@@ -1,7 +1,11 @@
-import { FieldError } from '@presentation/protocols/fields.protocols'
-import { HttpResponse } from '@presentation/protocols/http.protocols'
+import { FieldError, HttpResponse, ErrorsTypes } from '@presentation/protocols'
 
 export const badRequest = (errors: FieldError[]): HttpResponse => ({
   statusCode: 400,
   body: errors
+})
+
+export const serverError = (): HttpResponse => ({
+  statusCode: 500,
+  body: ErrorsTypes.SERVER_ERROR_TYPE
 })

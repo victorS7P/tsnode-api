@@ -1,6 +1,4 @@
-import FieldsErrors from '@presentation/helpers/fields-errors.helpers'
-import EmailValidator from '@presentation/protocols/email-validator.protocols'
-import { FieldValidatorFunction } from '@presentation/protocols/fields.protocols'
+import { EmailValidator, FieldValidatorFunction, ErrorsTypes } from '@presentation/protocols'
 
 import SignUpController from './signup.controller'
 
@@ -9,19 +7,23 @@ interface SutTypes {
   emailValidatorStub: EmailValidator
 }
 
-function makeSut (): SutTypes {
+function makeEmailValidatorStub (): EmailValidator {
   class EmailValidatorStub implements EmailValidator {
     run: FieldValidatorFunction = () => undefined
   }
 
-  const emailValidatorStub = new EmailValidatorStub()
+  return new EmailValidatorStub()
+}
+
+function makeSut (): SutTypes {
+  const emailValidatorStub = makeEmailValidatorStub()
   const sut = new SignUpController(emailValidatorStub)
 
   return { sut, emailValidatorStub }
 }
 
 describe('SignUp Controller', function () {
-  test('Should require name', function () {
+  test('should return 400 if name does not exist', function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -34,11 +36,11 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
-      field: 'name', error: FieldsErrors.REQUIRED_ERROR_TYPE
+      field: 'name', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should require email', function () {
+  test('should return 400 if email does not exist', function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -51,11 +53,11 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
-      field: 'email', error: FieldsErrors.REQUIRED_ERROR_TYPE
+      field: 'email', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should require password', function () {
+  test('should return 400 if password does not exist', function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -68,11 +70,11 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
-      field: 'password', error: FieldsErrors.REQUIRED_ERROR_TYPE
+      field: 'password', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should require password confirm', function () {
+  test('should return 400 if password confirm does not exist', function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -85,13 +87,30 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
-      field: 'passwordConfirm', error: FieldsErrors.REQUIRED_ERROR_TYPE
+      field: 'passwordConfirm', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should validate email as a correct email', function () {
+  test('should validate the correct email field', function () {
     const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'run').mockReturnValueOnce(FieldsErrors.INVALID_ERROR_TYPE)
+    const emailValidatorSpy = jest.spyOn(emailValidatorStub, 'run')
+
+    const httpReq = {
+      body: {
+        email: 'lorem@gmail.com',
+        name: 'lorem',
+        password: 'lorem',
+        passwordConfirm: 'lorem'
+      }
+    }
+
+    sut.run(httpReq)
+    expect(emailValidatorSpy).toBeCalledWith(httpReq.body.email)
+  })
+
+  test('should return 400 if email is invalid', function () {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'run').mockReturnValueOnce(ErrorsTypes.INVALID_ERROR_TYPE)
 
     const httpReq = {
       body: {
@@ -105,7 +124,27 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
-      field: 'email', error: FieldsErrors.INVALID_ERROR_TYPE
+      field: 'email', error: ErrorsTypes.INVALID_ERROR_TYPE
     }]))
+  })
+
+  test('should return 500 if EmailValidator throws', function () {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'run').mockImplementationOnce(() => {
+      throw Error('')
+    })
+
+    const httpReq = {
+      body: {
+        email: 'lorem@gmail.com',
+        name: 'lorem',
+        password: 'lorem',
+        passwordConfirm: 'lorem'
+      }
+    }
+
+    const httpResp = sut.run(httpReq)
+    expect(httpResp.statusCode).toBe(500)
+    expect(httpResp.body).toEqual(ErrorsTypes.SERVER_ERROR_TYPE)
   })
 })

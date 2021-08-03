@@ -1,7 +1,7 @@
-import FieldsErrors from '@presentation/helpers/fields-errors.helpers'
+import { ErrorsTypes } from '@presentation/protocols'
 
 export type FieldValidatorFunction =
-  (value: string) => (FieldsErrors | undefined)
+  (value: string) => (ErrorsTypes | undefined)
 
 export interface Field {
   field: string
@@ -10,5 +10,5 @@ export interface Field {
 
 export interface FieldError {
   field: string
-  error: FieldsErrors
+  error: ErrorsTypes
 }

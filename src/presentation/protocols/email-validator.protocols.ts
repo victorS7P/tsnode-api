@@ -1,5 +1,5 @@
 import { FieldValidatorFunction } from './fields.protocols'
 
-export default interface EmailValidator {
+export interface EmailValidator {
   run: FieldValidatorFunction
 }

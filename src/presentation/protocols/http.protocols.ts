@@ -1,3 +1,4 @@
+import { ErrorsTypes } from '@presentation/protocols'
 import { FieldError } from './fields.protocols'
 
 export interface HttpRequest {
@@ -5,6 +6,6 @@ export interface HttpRequest {
 }
 
 export interface HttpResponse {
-  body: FieldError[]
+  body: (FieldError[] | ErrorsTypes.SERVER_ERROR_TYPE)
   statusCode: number
 }
