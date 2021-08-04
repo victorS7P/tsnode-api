@@ -1,5 +1,5 @@
 import { Controller, EmailValidator, HttpRequest, HttpResponse, Field, FieldError } from '@protocols'
-import { badRequest, serverError, requiredValue, equalsToValue } from '@helpers'
+import { badRequest, serverError, requiredValue, equalsToValue, created } from '@helpers'
 import { AddAccount } from '@useCases'
 
 export default class SignUpController implements Controller {
@@ -11,7 +11,7 @@ export default class SignUpController implements Controller {
     this.addAccount = addAccount
   }
 
-  run (httpReq: HttpRequest): HttpResponse {
+  async run (httpReq: HttpRequest): Promise<HttpResponse> {
     const errors: FieldError[] = []
 
     const fields: Field[] = [
@@ -47,15 +47,13 @@ export default class SignUpController implements Controller {
       if (errors.length > 0) {
         return badRequest(errors)
       } else {
-        this.addAccount.run({
+        const account = await this.addAccount.run({
           name: httpReq.body.name,
           email: httpReq.body.email,
           password: httpReq.body.password
         })
 
-        return {
-          statusCode: 201
-        }
+        return created(account)
       }
     } catch (_error) {
       return serverError()

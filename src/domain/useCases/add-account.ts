@@ -4,5 +4,5 @@ export interface AddAccountModel
   extends Omit<AccountModel, 'id'> {}
 
 export interface AddAccount {
-  run: (values: AddAccountModel) => AccountModel
+  run: (values: AddAccountModel) => Promise<AccountModel>
 }

@@ -12,13 +12,15 @@ interface SutTypes {
 
 function makeAddAccountStub (): AddAccount {
   class AddAccountStub implements AddAccount {
-    run (values: AddAccountModel): AccountModel {
-      return ({
+    async run (values: AddAccountModel): Promise<AccountModel> {
+      const account = {
         id: 'lorem_id',
         name: 'lorem_name',
         email: 'lorem_email',
         password: 'lorem_password'
-      })
+      }
+
+      return await new Promise(resolve => resolve(account))
     }
   }
 
@@ -42,7 +44,7 @@ function makeSut (): SutTypes {
 }
 
 describe('SignUp Controller', function () {
-  test('should return 400 if name does not exist', function () {
+  test('should return 400 if name does not exist', async function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -52,14 +54,14 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
       field: 'name', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should return 400 if email does not exist', function () {
+  test('should return 400 if email does not exist', async function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -69,14 +71,14 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
       field: 'email', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should return 400 if password does not exist', function () {
+  test('should return 400 if password does not exist', async function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -86,14 +88,14 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
       field: 'password', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should return 400 if password confirm does not exist', function () {
+  test('should return 400 if password confirm does not exist', async function () {
     const { sut } = makeSut()
     const httpReq = {
       body: {
@@ -103,14 +105,14 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
       field: 'passwordConfirm', error: ErrorsTypes.REQUIRED_ERROR_TYPE
     }]))
   })
 
-  test('should call EmailValidator with correct email', function () {
+  test('should call EmailValidator with correct email', async function () {
     const { sut, emailValidatorStub } = makeSut()
     const emailValidatorSpy = jest.spyOn(emailValidatorStub, 'run')
 
@@ -123,11 +125,11 @@ describe('SignUp Controller', function () {
       }
     }
 
-    sut.run(httpReq)
+    await sut.run(httpReq)
     expect(emailValidatorSpy).toBeCalledWith(httpReq.body.email)
   })
 
-  test('should return 400 if email is invalid', function () {
+  test('should return 400 if email is invalid', async function () {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'run').mockImplementationOnce(() => ErrorsTypes.INVALID_ERROR_TYPE)
 
@@ -140,14 +142,14 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([{
       field: 'email', error: ErrorsTypes.INVALID_ERROR_TYPE
     }]))
   })
 
-  test('should return 500 if EmailValidator throws', function () {
+  test('should return 500 if EmailValidator throws', async function () {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'run').mockImplementationOnce(() => {
       throw Error('')
@@ -162,12 +164,12 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(500)
     expect(httpResp.body).toEqual(ErrorsTypes.SERVER_ERROR_TYPE)
   })
 
-  test('should return 400 if password and password confirm do not match', function () {
+  test('should return 400 if password and password confirm do not match', async function () {
     const { sut } = makeSut()
 
     const httpReq = {
@@ -179,7 +181,7 @@ describe('SignUp Controller', function () {
       }
     }
 
-    const httpResp = sut.run(httpReq)
+    const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(400)
     expect(httpResp.body).toEqual(expect.arrayContaining([
       { field: 'password', error: ErrorsTypes.INVALID_ERROR_TYPE },
@@ -187,7 +189,7 @@ describe('SignUp Controller', function () {
     ]))
   })
 
-  test('should call AddAccount with correct values', function () {
+  test('should call AddAccount with correct values', async function () {
     const { sut, addAccountStub } = makeSut()
     const addAccountSpy = jest.spyOn(addAccountStub, 'run')
 
@@ -200,11 +202,53 @@ describe('SignUp Controller', function () {
       }
     }
 
-    sut.run(httpReq)
+    await sut.run(httpReq)
     expect(addAccountSpy).toBeCalledWith({
       email: 'lorem@gmail.com',
       name: 'lorem',
       password: 'lorem'
+    })
+  })
+
+  test('should return 500 if AddAccount throws', async function () {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'run').mockImplementationOnce(async () => {
+      return await new Promise((resolve, reject) => reject(new Error()))
+    })
+
+    const httpReq = {
+      body: {
+        email: 'lorem@gmail.com',
+        name: 'lorem',
+        password: 'lorem',
+        passwordConfirm: 'lorem'
+      }
+    }
+
+    const httpResp = await sut.run(httpReq)
+    expect(httpResp.statusCode).toBe(500)
+    expect(httpResp.body).toEqual(ErrorsTypes.SERVER_ERROR_TYPE)
+  })
+
+  test('should return 201 if valid data is provided', async function () {
+    const { sut } = makeSut()
+
+    const httpReq = {
+      body: {
+        email: 'lorem@gmail.com',
+        name: 'lorem',
+        password: 'lorem',
+        passwordConfirm: 'lorem'
+      }
+    }
+
+    const httpResp = await sut.run(httpReq)
+    expect(httpResp.statusCode).toBe(201)
+    expect(httpResp.body).toEqual({
+      id: 'lorem_id',
+      name: 'lorem_name',
+      email: 'lorem_email',
+      password: 'lorem_password'
     })
   })
 })
