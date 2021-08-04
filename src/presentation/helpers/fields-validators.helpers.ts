@@ -1,4 +1,4 @@
-import { EqualToValueFieldValidator, ErrorsTypes, RequiredFieldValidator } from '@presentation/protocols'
+import { EqualToValueFieldValidator, ErrorsTypes, RequiredFieldValidator } from '@protocols'
 
 export const requiredValue: RequiredFieldValidator = () => (value) =>
   (value === undefined || value === null || value === '') ? ErrorsTypes.REQUIRED_ERROR_TYPE : undefined

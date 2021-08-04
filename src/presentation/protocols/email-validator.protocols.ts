@@ -1,4 +1,4 @@
-import { FieldValidatorCallback } from './fields.protocols'
+import { FieldValidatorCallback } from '@protocols'
 
 export interface EmailValidator {
   run: FieldValidatorCallback

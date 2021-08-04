@@ -1,11 +1,14 @@
-import { Controller, EmailValidator, HttpRequest, HttpResponse, Field, FieldError } from '@presentation/protocols'
-import { badRequest, serverError, requiredValue, equalsToValue } from '@presentation/helpers'
+import { Controller, EmailValidator, HttpRequest, HttpResponse, Field, FieldError } from '@protocols'
+import { badRequest, serverError, requiredValue, equalsToValue } from '@helpers'
+import { AddAccount } from '@useCases'
 
 export default class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
+  private readonly addAccount: AddAccount
 
-  constructor (emailValidator: EmailValidator) {
+  constructor (emailValidator: EmailValidator, addAccount: AddAccount) {
     this.emailValidator = emailValidator
+    this.addAccount = addAccount
   }
 
   run (httpReq: HttpRequest): HttpResponse {
@@ -41,7 +44,19 @@ export default class SignUpController implements Controller {
         }
       }
 
-      return badRequest(errors)
+      if (errors.length > 0) {
+        return badRequest(errors)
+      } else {
+        this.addAccount.run({
+          name: httpReq.body.name,
+          email: httpReq.body.email,
+          password: httpReq.body.password
+        })
+
+        return {
+          statusCode: 201
+        }
+      }
     } catch (_error) {
       return serverError()
     }

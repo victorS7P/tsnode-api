@@ -1,4 +1,4 @@
-import { FieldError, HttpResponse, ErrorsTypes } from '@presentation/protocols'
+import { FieldError, HttpResponse, ErrorsTypes } from '@protocols'
 
 export const badRequest = (errors: FieldError[]): HttpResponse => ({
   statusCode: 400,

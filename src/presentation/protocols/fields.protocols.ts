@@ -1,4 +1,4 @@
-import { ErrorsTypes } from '@presentation/protocols'
+import { ErrorsTypes } from '@protocols'
 
 export type FieldValidatorCallback =
   (value: string) => (ErrorsTypes | undefined)
