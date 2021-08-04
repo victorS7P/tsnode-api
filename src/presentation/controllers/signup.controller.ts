@@ -1,5 +1,5 @@
 import { Controller, EmailValidator, HttpRequest, HttpResponse, Field, FieldError } from '@presentation/protocols'
-import { badRequest, serverError, requiredValue } from '@presentation/helpers'
+import { badRequest, serverError, requiredValue, equalsToValue } from '@presentation/helpers'
 
 export default class SignUpController implements Controller {
   private readonly emailValidator: EmailValidator
@@ -14,19 +14,19 @@ export default class SignUpController implements Controller {
     const fields: Field[] = [
       {
         field: 'name',
-        validators: [requiredValue]
+        validators: [requiredValue()]
       },
       {
         field: 'email',
-        validators: [requiredValue, this.emailValidator.run]
+        validators: [requiredValue(), this.emailValidator.run]
       },
       {
         field: 'password',
-        validators: [requiredValue]
+        validators: [requiredValue(), equalsToValue(httpReq.body.passwordConfirm)]
       },
       {
         field: 'passwordConfirm',
-        validators: [requiredValue]
+        validators: [requiredValue(), equalsToValue(httpReq.body.password)]
       }
     ]
 

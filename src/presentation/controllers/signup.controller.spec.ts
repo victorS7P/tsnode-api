@@ -1,4 +1,4 @@
-import { EmailValidator, FieldValidatorFunction, ErrorsTypes } from '@presentation/protocols'
+import { EmailValidator, ErrorsTypes, FieldValidatorCallback } from '@presentation/protocols'
 
 import SignUpController from './signup.controller'
 
@@ -9,7 +9,7 @@ interface SutTypes {
 
 function makeEmailValidatorStub (): EmailValidator {
   class EmailValidatorStub implements EmailValidator {
-    run: FieldValidatorFunction = () => undefined
+    run: FieldValidatorCallback = () => undefined
   }
 
   return new EmailValidatorStub()
@@ -110,7 +110,7 @@ describe('SignUp Controller', function () {
 
   test('should return 400 if email is invalid', function () {
     const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'run').mockReturnValueOnce(ErrorsTypes.INVALID_ERROR_TYPE)
+    jest.spyOn(emailValidatorStub, 'run').mockImplementationOnce(() => ErrorsTypes.INVALID_ERROR_TYPE)
 
     const httpReq = {
       body: {
@@ -146,5 +146,25 @@ describe('SignUp Controller', function () {
     const httpResp = sut.run(httpReq)
     expect(httpResp.statusCode).toBe(500)
     expect(httpResp.body).toEqual(ErrorsTypes.SERVER_ERROR_TYPE)
+  })
+
+  test('should return 400 if password and password confirm do not match', function () {
+    const { sut } = makeSut()
+
+    const httpReq = {
+      body: {
+        email: 'lorem@gmail.com',
+        name: 'lorem',
+        password: 'lorem',
+        passwordConfirm: 'invalid'
+      }
+    }
+
+    const httpResp = sut.run(httpReq)
+    expect(httpResp.statusCode).toBe(400)
+    expect(httpResp.body).toEqual(expect.arrayContaining([
+      { field: 'password', error: ErrorsTypes.INVALID_ERROR_TYPE },
+      { field: 'passwordConfirm', error: ErrorsTypes.INVALID_ERROR_TYPE }
+    ]))
   })
 })

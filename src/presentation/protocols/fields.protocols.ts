@@ -1,11 +1,26 @@
 import { ErrorsTypes } from '@presentation/protocols'
 
-export type FieldValidatorFunction =
+export type FieldValidatorCallback =
   (value: string) => (ErrorsTypes | undefined)
+
+export type RequiredFieldValidator =
+  () => FieldValidatorCallback
+
+export type EmailFieldValidator =
+  () => FieldValidatorCallback
+
+export type EqualToValueFieldValidator =
+  (equalsTo: string) => FieldValidatorCallback
+
+export type FieldValidatorFunctionFactory = (
+  RequiredFieldValidator |
+  EmailFieldValidator |
+  EqualToValueFieldValidator
+)
 
 export interface Field {
   field: string
-  validators: FieldValidatorFunction[]
+  validators: FieldValidatorCallback[]
 }
 
 export interface FieldError {
