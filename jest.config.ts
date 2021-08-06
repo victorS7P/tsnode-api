@@ -6,9 +6,9 @@ export default {
     '@protocols': '<rootDir>/src/presentation/protocols/index.ts',
     '@helpers': '<rootDir>/src/presentation/helpers/index.ts',
     '@models': '<rootDir>/src/domain/models/index.ts',
-    '@useCases': '<rootDir>/src/domain/useCases/index.ts'
+    '@useCases': '<rootDir>/src/domain/useCases/index.ts',
+    '@adapters': '<rootDir>/src/utils/adapters/index.ts'
   },
-
   roots: ['<rootDir>/src'],
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

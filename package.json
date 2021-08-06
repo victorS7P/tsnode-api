@@ -6,6 +6,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.6",
+    "@types/validator": "^13.6.3",
     "git-commit-msg-linter": "^3.2.6",
     "husky": "^7.0.0",
     "jest": "^27.0.6",
@@ -23,5 +24,8 @@
     "test:integration": "yarn test --watch -c ./jest-integration.config.ts",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage"
+  },
+  "dependencies": {
+    "validator": "^13.6.0"
   }
 }

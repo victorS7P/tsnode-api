@@ -14,7 +14,8 @@
       "@protocols": ["./src/presentation/protocols/index.ts"],
       "@helpers": ["./src/presentation/helpers/index.ts"],
       "@models": ["./src/domain/models/index.ts"],
-      "@useCases": ["./src/domain/useCases/index.ts"]
+      "@useCases": ["./src/domain/useCases/index.ts"],
+      "@adapters": ["./src/utils/adapters/index.ts"],
     }
   }
 }

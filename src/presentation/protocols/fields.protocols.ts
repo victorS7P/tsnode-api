@@ -1,7 +1,9 @@
 import { ErrorsTypes } from '@protocols'
 
+export type FieldErrorType = (ErrorsTypes | undefined)
+
 export type FieldValidatorCallback =
-  (value: string) => (ErrorsTypes | undefined)
+  (value: string) => FieldErrorType
 
 export type RequiredFieldValidator =
   () => FieldValidatorCallback
