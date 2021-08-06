@@ -8,6 +8,7 @@ export default {
     '@models': '<rootDir>/src/domain/models/index.ts',
     '@useCases': '<rootDir>/src/domain/useCases/index.ts'
   },
+
   roots: ['<rootDir>/src'],
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

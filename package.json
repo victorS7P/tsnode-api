@@ -18,6 +18,10 @@
     "lint": "npx ts-standard | npx snazzy",
     "lint:fix": "yarn lint --fix",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest --silent",
+    "test:unit": "yarn test --watch -c ./jest-unit.config.ts",
+    "test:integration": "yarn test --watch -c ./jest-integration.config.ts",
+    "test:staged": "yarn test --findRelatedTests",
+    "test:ci": "yarn test --coverage"
   }
 }
