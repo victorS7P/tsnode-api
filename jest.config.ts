@@ -8,7 +8,8 @@ export default {
     '@helpers': '<rootDir>/src/presentation/helpers/index.ts',
     '@models': '<rootDir>/src/domain/models/index.ts',
     '@useCases': '<rootDir>/src/domain/useCases/index.ts',
-    '@adapters': '<rootDir>/src/utils/adapters/index.ts'
+    '@adapters': '<rootDir>/src/utils/adapters/index.ts',
+    '@fakes': '<rootDir>/tests/fakes/index.ts'
   },
   roots: ['<rootDir>/src'],
   collectCoverage: true,

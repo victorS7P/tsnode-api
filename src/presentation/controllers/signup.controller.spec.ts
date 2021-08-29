@@ -1,3 +1,5 @@
+import { fakeAccount } from '@fakes'
+
 import { AccountModel } from '@models'
 import { EmailValidator, ErrorsTypes, FieldValidatorCallback } from '@protocols'
 import { AddAccount, AddAccountModel } from '@useCases'
@@ -13,14 +15,7 @@ interface SutTypes {
 function makeAddAccountStub (): AddAccount {
   class AddAccountStub implements AddAccount {
     async run (values: AddAccountModel): Promise<AccountModel> {
-      const account = {
-        id: 'lorem_id',
-        name: 'lorem_name',
-        email: 'lorem_email',
-        password: 'lorem_password'
-      }
-
-      return await new Promise(resolve => resolve(account))
+      return await new Promise(resolve => resolve(fakeAccount))
     }
   }
 
@@ -244,11 +239,6 @@ describe('SignUp Controller', function () {
 
     const httpResp = await sut.run(httpReq)
     expect(httpResp.statusCode).toBe(201)
-    expect(httpResp.body).toEqual({
-      id: 'lorem_id',
-      name: 'lorem_name',
-      email: 'lorem_email',
-      password: 'lorem_password'
-    })
+    expect(httpResp.body).toEqual(fakeAccount)
   })
 })

@@ -1,11 +1,15 @@
-import { AddAccount } from '@useCases'
-import { Encrypter } from '@data/protocols'
+import { fakeAccount } from '@fakes'
+
+import { AccountModel } from '@models'
+import { AddAccount, AddAccountModel } from '@useCases'
+import { Encrypter, AddAccountRepository } from '@data/protocols'
 
 import { DBAddAccount } from './db-add-account.useCase'
 
 interface SutTypes {
   sut: AddAccount
   encrypterStub: Encrypter
+  addAccountRepositoryStub: AddAccountRepository
 }
 
 function makeEncrypterStub (): Encrypter {
@@ -18,11 +22,23 @@ function makeEncrypterStub (): Encrypter {
   return new EncrypterStub()
 }
 
+function makeAddAccountRepositoryStub (): AddAccountRepository {
+  class AddAccountRepositoryStub implements AddAccountRepository {
+    async run (accountData: AddAccountModel): Promise<AccountModel> {
+      return await new Promise(resolve => resolve({ ...fakeAccount, password: 'hash' }))
+    }
+  }
+
+  return new AddAccountRepositoryStub()
+}
+
 function makeSut (): SutTypes {
   const encrypterStub = makeEncrypterStub()
-  const sut = new DBAddAccount(encrypterStub)
+  const addAccountRepositoryStub = makeAddAccountRepositoryStub()
 
-  return { encrypterStub, sut }
+  const sut = new DBAddAccount(encrypterStub, addAccountRepositoryStub)
+
+  return { encrypterStub, sut, addAccountRepositoryStub }
 }
 
 describe('DBAddAccount Usecase', function () {
@@ -41,12 +57,37 @@ describe('DBAddAccount Usecase', function () {
     expect(encrypterSpy).toHaveBeenCalledWith(accountData.password)
   })
 
-  test('should throw error if encrypter rehects', async function () {
+  test('should throw error if encrypter rejects', async function () {
     const { sut, encrypterStub } = makeSut()
 
     jest.spyOn(encrypterStub, 'run').mockRejectedValueOnce(new Error('rejected'))
     const promise = sut.run(accountData)
 
     await expect(promise).rejects.toThrow('rejected')
+  })
+
+  test('should call add account repository with account data', async function () {
+    const { sut, addAccountRepositoryStub } = makeSut()
+
+    const addAccountRepositorySpy = jest.spyOn(addAccountRepositoryStub, 'run')
+    await sut.run(accountData)
+
+    expect(addAccountRepositorySpy).toHaveBeenCalledWith({ ...accountData, password: 'hash' })
+  })
+
+  test('should throw error if add account repository rejects', async function () {
+    const { sut, addAccountRepositoryStub } = makeSut()
+
+    jest.spyOn(addAccountRepositoryStub, 'run').mockRejectedValueOnce(new Error('rejected'))
+    const promise = sut.run(accountData)
+
+    await expect(promise).rejects.toThrow('rejected')
+  })
+
+  test('should throw error if add account repository rejects', async function () {
+    const { sut } = makeSut()
+    const account = await sut.run(accountData)
+
+    expect(account).toEqual({ ...fakeAccount, password: 'hash' })
   })
 })

@@ -17,6 +17,7 @@
       "@models": ["./src/domain/models/index.ts"],
       "@useCases": ["./src/domain/useCases/index.ts"],
       "@adapters": ["./src/utils/adapters/index.ts"],
+      "@fakes": ["./tests/fakes/index.ts"],
     }
   }
 }
