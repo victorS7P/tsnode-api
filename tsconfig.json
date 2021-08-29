@@ -8,6 +8,7 @@
     "target": "es2019",
     "baseUrl": ".",
     "paths": {
+      "@data/*": ["./src/data/*"],
       "@models/*": ["./src/domain/models/*"],
       "@useCases/*": ["./src/domain/useCases/*"],
       "@presentation/*": ["./src/presentation/*"],

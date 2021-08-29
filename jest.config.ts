@@ -1,5 +1,6 @@
 export default {
   moduleNameMapper: {
+    '@data/(.*)': '<rootDir>/src/data/$1',
     '@models/(.*)': '<rootDir>/src/domain/models/$1',
     '@useCases/(.*)': '<rootDir>/src/domain/useCases/$1',
     '@presentation/(.*)': '<rootDir>/src/presentation/$1',
