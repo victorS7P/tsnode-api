@@ -12,6 +12,7 @@
       "@models/*": ["./src/domain/models/*"],
       "@useCases/*": ["./src/domain/useCases/*"],
       "@presentation/*": ["./src/presentation/*"],
+      "@mongodb/*": ["./src/infra/db/mongodb/*"],
       "@protocols": ["./src/presentation/protocols/index.ts"],
       "@helpers": ["./src/presentation/helpers/index.ts"],
       "@models": ["./src/domain/models/index.ts"],

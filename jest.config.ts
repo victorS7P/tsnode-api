@@ -4,6 +4,7 @@ export default {
     '@models/(.*)': '<rootDir>/src/domain/models/$1',
     '@useCases/(.*)': '<rootDir>/src/domain/useCases/$1',
     '@presentation/(.*)': '<rootDir>/src/presentation/$1',
+    '@mongodb/(.*)': '<rootDir>/infra/db/mongodb/$1',
     '@protocols': '<rootDir>/src/presentation/protocols/index.ts',
     '@helpers': '<rootDir>/src/presentation/helpers/index.ts',
     '@models': '<rootDir>/src/domain/models/index.ts',
