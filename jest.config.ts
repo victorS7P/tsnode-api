@@ -11,6 +11,7 @@ export default {
     '@adapters': '<rootDir>/src/utils/adapters/index.ts',
     '@fakes': '<rootDir>/tests/fakes/index.ts'
   },
+  preset: '@shelf/jest-mongodb',
   roots: ['<rootDir>/src'],
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
